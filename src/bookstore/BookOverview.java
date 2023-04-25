@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class BookOverview extends JPanel {
 
@@ -16,37 +17,54 @@ public class BookOverview extends JPanel {
     }
 
     public void createBookOverview(String text) {
-        this.setPreferredSize(new Dimension(250, 80));
-
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         JLabel title = new JLabel(text);
         title.setHorizontalAlignment(JLabel.CENTER);
         title.setFont(new Font("TimesRoman", Font.BOLD, 20));
-        title.setLocation(150, 50);
-        title.setSize(100,20);
-        this.add(title);
 
-        JList<JLabel> list = new JList<>(getBooks());
-        this.add(list);
+        this.add(title, CENTER_ALIGNMENT);
+        this.add(Box.createHorizontalGlue());
+
+
+
+        String[] columnNames = {"ID",
+                "Author",
+                "Title",
+                "Type",
+                "Rating"};
+
+        JTable table = new JTable(getBooks(), columnNames);
+        table.setRowHeight(30);
+        table.getColumn("ID").setMaxWidth(25);
+        table.getColumn("Rating").setMaxWidth(40);
+        table.getColumn("Type").setMaxWidth(35);
+
+        this.add(table.getTableHeader(), CENTER_ALIGNMENT);
+        this.add(table, CENTER_ALIGNMENT);
     }
 
-    private DefaultListModel<JLabel> getBooks() {
+    private Object[][] getBooks() {
         DBConnection db = new DBConnection();
+        ArrayList<String[]> rows = new ArrayList<>();
 
-        DefaultListModel<JLabel> listModel = new DefaultListModel<>();
         ResultSet books = db.getBooks();
         try {
             while (books.next()) {
-                JLabel title = new JLabel(books.getString("author"));
-                title.setHorizontalAlignment(JLabel.CENTER);
-                title.setFont(new Font("TimesRoman", Font.BOLD, 20));
-                title.setSize(100,20);
-
-                listModel.addElement(title);
-                System.out.println(books.getString("author"));
+                String[] row = {books.getString("id"),
+                        books.getString("author"),
+                        books.getString("title"),
+                        books.getString("type"),
+                        books.getString("rating")};
+                rows.add(row);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return listModel;
+        Object[][] data = new Object[rows.size()][];
+        for (int i = 0; i < rows.size(); i++) {
+            data[i] = rows.get(i);
+        }
+
+        return data;
     }
 }
