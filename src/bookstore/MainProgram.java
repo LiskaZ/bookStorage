@@ -15,11 +15,10 @@ public class MainProgram extends JPanel {
 
         BookOverview bo = new BookOverview();
         bo.setOpaque(true);
-        JComponent panel1 = bo.getPanel();
-        tabbedPane.addTab("Overview", icon, panel1,
+        tabbedPane.addTab("Overview", icon, bo,
                 "Does nothing");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        panel1.setPreferredSize(new Dimension(700, 700));
+        bo.setPreferredSize(new Dimension(700, 700));
 
         JComponent panel2 = makeTextPanel("Search Books");
         tabbedPane.addTab("Search Books", icon, panel2,
