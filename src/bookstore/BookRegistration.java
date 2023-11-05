@@ -29,6 +29,8 @@ public class BookRegistration implements ActionListener {
     private JTextField tkey6;
     private JTextField tkey7;
     private JButton sub;
+    private JButton reset;
+
     private final DBConnection db;
     private final BookOverview bo;
 
@@ -53,6 +55,11 @@ public class BookRegistration implements ActionListener {
         panel.add(title);
 
         createForm(panel);
+
+        this.sub = createButton("Submit");
+        this.reset = createButton("Reset");
+        panel.add(sub);
+        panel.add(reset);
 
         return panel;
     }
@@ -98,9 +105,6 @@ public class BookRegistration implements ActionListener {
         this.tkey5 = createTextField();
         this.tkey6 = createTextField();
         this.tkey7 = createTextField();
-        this.sub = createButton("Submit");
-        JButton reset = createButton("Reset");
-
 
         panel.add(author);
         panel.add(tauthor);
@@ -128,8 +132,6 @@ public class BookRegistration implements ActionListener {
         panel.add(tkey6);
         panel.add(key7);
         panel.add(tkey7);
-        panel.add(sub);
-        panel.add(reset);
     }
 
     private JButton createButton(String text) {
@@ -159,53 +161,44 @@ public class BookRegistration implements ActionListener {
 
     public void actionPerformed(ActionEvent e)
     {
-        if (e.getSource() == sub ) {
+        if (e.getSource() == sub
+            && (verifyTextContent(tauthor)
+            & verifyTextContent(ttitle)
+            & verifyTextContent(tdescription)
+            & verifyStarIndex(trating)
+            & verifyIndex(ttype)
+            & verifyIndex(tlanguage))) {
+            int keyID1 = getKeyID(tkey1);
+            int keyID2 = getKeyID(tkey2);
+            int keyID3 = getKeyID(tkey3);
+            int keyID4 = getKeyID(tkey4);
+            int keyID5 = getKeyID(tkey5);
+            int keyID6 = getKeyID(tkey6);
+            int keyID7 = getKeyID(tkey7);
 
-            verifyTextContent(tauthor);
-            verifyTextContent(ttitle);
-            verifyTextContent(tdescription);
-            verifyStarIndex(trating);
-            verifyIndex(ttype);
-            verifyIndex(tlanguage);
+            long id = db.insertBook(tauthor.getText(),
+                    ttitle.getText(),
+                    tdescription.getText(),
+                    tlanguage.getSelectedIndex(),
+                    ttype.getSelectedIndex(),
+                    trating.getStar(),
+                    keyID1,
+                    keyID2,
+                    keyID3,
+                    keyID4,
+                    keyID5,
+                    keyID6,
+                    keyID7);
 
-            if (verifyTextContent(tauthor) &&
-            verifyTextContent(ttitle) &&
-            verifyTextContent(tdescription) &&
-            verifyStarIndex(trating) &&
-            verifyIndex(ttype) &&
-            verifyIndex(tlanguage)) {
-                int keyID1 = getKeyID(tkey1);
-                int keyID2 = getKeyID(tkey2);
-                int keyID3 = getKeyID(tkey3);
-                int keyID4 = getKeyID(tkey4);
-                int keyID5 = getKeyID(tkey5);
-                int keyID6 = getKeyID(tkey6);
-                int keyID7 = getKeyID(tkey7);
-
-                long id = db.insertBook(tauthor.getText(),
-                        ttitle.getText(),
-                        tdescription.getText(),
-                        tlanguage.getSelectedIndex(),
-                        ttype.getSelectedIndex(),
-                        trating.getStar(),
-                        keyID1,
-                        keyID2,
-                        keyID3,
-                        keyID4,
-                        keyID5,
-                        keyID6,
-                        keyID7);
-
-                JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
-                Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
-                bo.addBook(bookRow);
-                cleanForm();
-            } else {
-                logger.info("Please check your form input!");
-            }
+            JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
+            Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
+            bo.addBook(bookRow);
+            cleanForm();
+        } else if (e.getSource() == reset) {
+            cleanForm();
         } else {
             logger.info(("Action deleted"));
-            cleanForm();
+            logger.info("Please check your form input!");
         }
     }
 
