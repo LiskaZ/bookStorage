@@ -16,7 +16,6 @@ import static bookstore.util.BookStoreComponents.*;
 public class BookRegistration implements ActionListener {
     Logger logger = LoggerFactory.getLogger(BookRegistration.class);
 
-
     private JTextField tauthor = createTextField();
     private JTextField ttitle  = createTextField();
     private JTextField tdescription  = createTextField();
@@ -127,43 +126,42 @@ public class BookRegistration implements ActionListener {
 
     public void actionPerformed(ActionEvent e)
     {
-        if (e.getSource() == sub
-            && (verifyTextContent(tauthor)
+        if (verifyTextContent(tauthor)
             & verifyTextContent(ttitle)
             & verifyTextContent(tdescription)
             & verifyStarIndex(trating)
             & verifyIndex(ttype)
-            & verifyIndex(tlanguage))) {
-            int keyID1 = getKeyID(tkey1);
-            int keyID2 = getKeyID(tkey2);
-            int keyID3 = getKeyID(tkey3);
-            int keyID4 = getKeyID(tkey4);
-            int keyID5 = getKeyID(tkey5);
-            int keyID6 = getKeyID(tkey6);
-            int keyID7 = getKeyID(tkey7);
+            & verifyIndex(tlanguage)) {
 
-            long id = db.insertBook(tauthor.getText(),
-                    ttitle.getText(),
-                    tdescription.getText(),
-                    tlanguage.getSelectedIndex(),
-                    ttype.getSelectedIndex(),
-                    trating.getStar(),
-                    keyID1,
-                    keyID2,
-                    keyID3,
-                    keyID4,
-                    keyID5,
-                    keyID6,
-                    keyID7);
-
+            long id = addBookToDatabase();
+            addBookToOverview(id);
             JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
-            Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
-            bo.addBook(bookRow);
             cleanForm();
+
         } else {
-            logger.info(("Action deleted"));
-            logger.info("Please check your form input!");
+            logger.info("Submit action aborted. Please check your form input!");
         }
+    }
+
+    private void addBookToOverview(long id) {
+        Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
+        bo.addBook(bookRow);
+    }
+
+    private long addBookToDatabase() {
+        return db.insertBook(tauthor.getText(),
+                ttitle.getText(),
+                tdescription.getText(),
+                tlanguage.getSelectedIndex(),
+                ttype.getSelectedIndex(),
+                trating.getStar(),
+                getKeyID(tkey1),
+                getKeyID(tkey2),
+                getKeyID(tkey3),
+                getKeyID(tkey4),
+                getKeyID(tkey5),
+                getKeyID(tkey6),
+                getKeyID(tkey7));
     }
 
     private int getKeyID(JTextField tkey) {
