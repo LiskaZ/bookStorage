@@ -25,10 +25,10 @@ public class BookOverview extends JPanel {
         JLabel title = new JLabel(text);
         title.setHorizontalAlignment(JLabel.CENTER);
         title.setFont(new Font("TimesRoman", Font.BOLD, 20));
+        title.setLocation(150, 50);
 
         this.add(title, CENTER_ALIGNMENT);
         this.add(Box.createHorizontalGlue());
-
 
 
         String[] columnNames = {"ID",
@@ -61,7 +61,7 @@ public class BookOverview extends JPanel {
         bookOverwiew.getColumn("Delete").setCellEditor(
                 new ButtonEditor(new JCheckBox(), this));
         this.add(bookOverwiew.getTableHeader(), CENTER_ALIGNMENT);
-        this.add(bookOverwiew, CENTER_ALIGNMENT);
+        this.add(new JScrollPane(bookOverwiew), CENTER_ALIGNMENT);
     }
 
     public void addBook(Object[] book) {
