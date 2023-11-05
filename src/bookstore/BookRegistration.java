@@ -37,8 +37,6 @@ public class BookRegistration implements ActionListener {
     private final String[] types
             = { "select type", "intimate", "great ones", "better ones", "funny or magic" };
 
-    int filledForm = 0;
-
     public BookRegistration(BookOverview bo) {
         this.db = new DBConnection();
         this.bo = bo;
@@ -170,7 +168,12 @@ public class BookRegistration implements ActionListener {
             verifyIndex(ttype);
             verifyIndex(tlanguage);
 
-            if (filledForm == 6) {
+            if (verifyTextContent(tauthor) &&
+            verifyTextContent(ttitle) &&
+            verifyTextContent(tdescription) &&
+            verifyStarIndex(trating) &&
+            verifyIndex(ttype) &&
+            verifyIndex(tlanguage)) {
                 int keyID1 = getKeyID(tkey1);
                 int keyID2 = getKeyID(tkey2);
                 int keyID3 = getKeyID(tkey3);
@@ -200,14 +203,13 @@ public class BookRegistration implements ActionListener {
             } else {
                 logger.info("Please check your form input!");
             }
-            filledForm = 0;
         } else {
             logger.info(("Action deleted"));
             cleanForm();
         }
     }
 
-    private int getKeyID(JTextField tkey) {;
+    private int getKeyID(JTextField tkey) {
         if (!tkey.getText().isEmpty()) {
             return db.insertKeyword(tkey.getText());
         } else {
@@ -215,30 +217,34 @@ public class BookRegistration implements ActionListener {
         }
     }
 
-    private void verifyIndex(JComboBox<String> comboBox) {
+    private boolean verifyIndex(JComboBox<String> comboBox) {
         if (comboBox.getSelectedIndex() == 0){
             comboBox.setBorder(new LineBorder(Color.red,1));
+            return false;
         } else {
-            filledForm += 1;
             comboBox.setBorder(new LineBorder(Color.black,1));
+            return true;
         }
     }
 
-    private void verifyStarIndex(StarRating starRating) {
+    private boolean verifyStarIndex(StarRating starRating) {
         if (starRating.getStar() == 0) {
             starRating.setBorder(new LineBorder(Color.red, 1));
+            return false;
+
         } else {
-            filledForm += 1;
             starRating.setBorder(new LineBorder(Color.black,1));
+            return true;
         }
     }
 
-    private void verifyTextContent(JTextField textField) {
+    private boolean verifyTextContent(JTextField textField) {
         if (textField.getText().isEmpty()){
             textField.setBorder(new LineBorder(Color.red,1));
+            return false;
         } else {
-            filledForm += 1;
             textField.setBorder(new LineBorder(Color.black,1));
+            return true;
         }
     }
 
