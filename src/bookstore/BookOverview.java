@@ -3,6 +3,7 @@ package bookstore;
 import bookstore.db.DBConnection;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import static bookstore.util.BookStoreComponents.createTitle;
 import java.sql.ResultSet;
@@ -15,7 +16,7 @@ public class BookOverview extends JPanel {
     DefaultTableModel tableModel= new DefaultTableModel(columnNames, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 5 ? true: false;
+            return column == 5 ? true : false;
         }
     };
     JTable bookOverview = new JTable(tableModel);
@@ -49,6 +50,12 @@ public class BookOverview extends JPanel {
         bookOverview.getColumn("Delete").setCellRenderer(new ButtonRenderer());
         bookOverview.getColumn("Delete").setCellEditor(
                 new ButtonEditor(new JCheckBox(), this));
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        bookOverview.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        bookOverview.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        bookOverview.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
     }
 
     private void getBooksFromDataBase() {
