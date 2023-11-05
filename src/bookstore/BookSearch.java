@@ -3,7 +3,14 @@ package bookstore;
 import javax.swing.*;
 import java.awt.*;
 
+import static bookstore.util.BookStoreComponents.createTextField;
+
 public class BookSearch extends JPanel {
+    private JButton searchBtn = new JButton("Search");
+    private JTextField searchable = createTextField();
+
+
+
     public BookSearch() {
         super();
 
@@ -20,13 +27,8 @@ public class BookSearch extends JPanel {
 
         JPanel searchPanel = new JPanel();
         searchPanel.setPreferredSize(new Dimension(120,20));
-
-        JTextField searchable = new JTextField("Search String", 3);
-        searchable.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        JButton searchBtn = new JButton("Search");
-
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.LINE_AXIS));
+
         searchPanel.add(searchable);
         searchPanel.add(searchBtn);
 

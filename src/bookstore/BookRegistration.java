@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static bookstore.util.BookStoreComponents.*;
+
 public class BookRegistration implements ActionListener {
     Logger logger = LoggerFactory.getLogger(BookRegistration.class);
 
@@ -57,7 +59,11 @@ public class BookRegistration implements ActionListener {
         createForm(panel);
 
         this.sub = createButton("Submit");
+        sub.addActionListener(this);
+
         this.reset = createButton("Reset");
+        reset.addActionListener(this);
+
         panel.add(sub);
         panel.add(reset);
 
@@ -132,31 +138,6 @@ public class BookRegistration implements ActionListener {
         panel.add(tkey6);
         panel.add(key7);
         panel.add(tkey7);
-    }
-
-    private JButton createButton(String text) {
-        JButton btn = new JButton(text);
-        btn.setFont(new Font("Arial", Font.PLAIN, 15));
-        btn.setSize(100, 20);
-        btn.setLocation(220, 450);
-        btn.addActionListener(this);
-        return btn;
-    }
-
-    private JLabel createLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 20));
-        label.setSize(100, 20);
-        label.setLocation(100, 200);
-        return label;
-    }
-
-    private JTextField createTextField() {
-        JTextField textfield = new JTextField();
-        textfield.setFont(new Font("Arial", Font.PLAIN, 15));
-        textfield.setSize(100, 16);
-        textfield.setLocation(200, 200);
-        return textfield;
     }
 
     public void actionPerformed(ActionEvent e)
