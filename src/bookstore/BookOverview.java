@@ -4,15 +4,21 @@ import bookstore.db.DBConnection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import static bookstore.util.BookStoreComponents.createTitle;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class BookOverview extends JPanel {
 
-    JTable bookOverwiew;
-    DefaultTableModel tableModel;
+    private String[] columnNames = { "ID", "Author", "Title", "Type", "Rating", "Delete" };
+    DefaultTableModel tableModel= new DefaultTableModel(columnNames, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 5 ? true: false;
+        }
+    };
+    JTable bookOverview = new JTable(tableModel);
 
     public BookOverview() {
         super();
@@ -22,46 +28,34 @@ public class BookOverview extends JPanel {
 
     public void createBookOverview(String text) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        JLabel title = new JLabel(text);
-        title.setHorizontalAlignment(JLabel.CENTER);
-        title.setFont(new Font("TimesRoman", Font.BOLD, 20));
-        title.setLocation(150, 50);
+        JLabel title = createTitle(text);
 
         this.add(title, CENTER_ALIGNMENT);
         this.add(Box.createHorizontalGlue());
 
+        getBooksFromDataBase();
+        renderBookTable();
 
-        String[] columnNames = {"ID",
-                "Author",
-                "Title",
-                "Type",
-                "Rating",
-                "Delete"
-        };
+        this.add(bookOverview.getTableHeader(), CENTER_ALIGNMENT);
+        this.add(new JScrollPane(bookOverview), CENTER_ALIGNMENT);
+    }
 
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                // make read only fields except column 0,13,14
-                return column == 5 ? true: false;
-            }
-        };
-        this.bookOverwiew = new JTable(tableModel);
+    private void renderBookTable() {
+        bookOverview.setRowHeight(30);
+        bookOverview.getColumn("ID").setMaxWidth(25);
+        bookOverview.getColumn("Rating").setMaxWidth(40);
+        bookOverview.getColumn("Type").setMaxWidth(35);
+        bookOverview.getColumn("Delete").setMaxWidth(40);
+        bookOverview.getColumn("Delete").setCellRenderer(new ButtonRenderer());
+        bookOverview.getColumn("Delete").setCellEditor(
+                new ButtonEditor(new JCheckBox(), this));
+    }
 
+    private void getBooksFromDataBase() {
         Object [][] books = getBooks();
         for (Object[] book : books) {
             tableModel.addRow(book);
         }
-        bookOverwiew.setRowHeight(30);
-        bookOverwiew.getColumn("ID").setMaxWidth(25);
-        bookOverwiew.getColumn("Rating").setMaxWidth(40);
-        bookOverwiew.getColumn("Type").setMaxWidth(35);
-        bookOverwiew.getColumn("Delete").setMaxWidth(40);
-        bookOverwiew.getColumn("Delete").setCellRenderer(new ButtonRenderer());
-        bookOverwiew.getColumn("Delete").setCellEditor(
-                new ButtonEditor(new JCheckBox(), this));
-        this.add(bookOverwiew.getTableHeader(), CENTER_ALIGNMENT);
-        this.add(new JScrollPane(bookOverwiew), CENTER_ALIGNMENT);
     }
 
     public void addBook(Object[] book) {
@@ -69,7 +63,7 @@ public class BookOverview extends JPanel {
     }
 
     public void removeBook(int bookRow) {
-        DefaultTableModel model = (DefaultTableModel) bookOverwiew.getModel();
+        DefaultTableModel model = (DefaultTableModel) bookOverview.getModel();
         model.removeRow(bookRow);
     }
 
@@ -100,5 +94,4 @@ public class BookOverview extends JPanel {
 
         return data;
     }
-
 }

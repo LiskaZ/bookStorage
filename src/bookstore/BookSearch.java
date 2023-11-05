@@ -3,8 +3,7 @@ package bookstore;
 import javax.swing.*;
 import java.awt.*;
 
-import static bookstore.util.BookStoreComponents.createTextField;
-import static bookstore.util.BookStoreComponents.createTitle;
+import static bookstore.util.BookStoreComponents.*;
 
 public class BookSearch extends JPanel {
     private JButton searchBtn = new JButton("Search");
@@ -15,7 +14,7 @@ public class BookSearch extends JPanel {
     public BookSearch() {
         super();
 
-        createBookSearch("Search");
+        createBookSearch("Search books");
         addSearch();
     }
 
