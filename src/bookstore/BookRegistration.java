@@ -56,10 +56,10 @@ public class BookRegistration implements ActionListener {
         createForm(panel);
 
         this.sub = createButton("Submit");
-        sub.addActionListener(this);
+        sub.addActionListener(e -> actionPerformed(e));
 
         this.reset = createButton("Reset");
-        reset.addActionListener(this);
+        reset.addActionListener(e -> cleanForm());
 
         panel.add(sub);
         panel.add(reset);
@@ -160,8 +160,6 @@ public class BookRegistration implements ActionListener {
             Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
             bo.addBook(bookRow);
             cleanForm();
-        } else if (e.getSource() == reset) {
-            cleanForm();
         } else {
             logger.info(("Action deleted"));
             logger.info("Please check your form input!");
@@ -210,11 +208,17 @@ public class BookRegistration implements ActionListener {
     private void cleanForm() {
         String def = "";
         tauthor.setText(def);
+        tauthor.setBorder(new LineBorder(Color.black,1));
         ttitle.setText(def);
+        ttitle.setBorder(new LineBorder(Color.black,1));
         tdescription.setText(def);
+        tdescription.setBorder(new LineBorder(Color.black,1));
         trating.starsReset();
+        trating.setBorder(new LineBorder(Color.black,1));
         ttype.setSelectedIndex(0);
+        ttype.setBorder(new LineBorder(Color.black,1));
         tlanguage.setSelectedIndex(0);
+        tlanguage.setBorder(new LineBorder(Color.black,1));
         tkey1.setText(def);
         tkey2.setText(def);
         tkey3.setText(def);
