@@ -1,14 +1,15 @@
 package bookstore;
 
-import bookstore.db.DBConnection;
+import bookstore.dataobjects.Book;
+import bookstore.db.BookDAO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import static bookstore.util.BookStoreComponents.createTitle;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class BookOverview extends JPanel {
 
@@ -50,7 +51,7 @@ public class BookOverview extends JPanel {
         bookOverview.getColumn("Delete").setCellRenderer(new ButtonRenderer());
         bookOverview.getColumn("Delete").setCellEditor(
                 new ButtonEditor(new JCheckBox(), this));
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         bookOverview.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
@@ -75,25 +76,21 @@ public class BookOverview extends JPanel {
     }
 
     private Object[][] getBooks() {
-        DBConnection db = new DBConnection();
         ArrayList<Object[]> rows = new ArrayList<>();
 
-        ResultSet books = db.getBooks();
-        try {
-            while (books.next()) {
-                Object[] row = {
-                        books.getString("id"),
-                        books.getString("author"),
-                        books.getString("title"),
-                        books.getString("type"),
-                        books.getString("rating"),
-                        books.getString("id")
-                };
-                rows.add(row);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        BookDAO bookstore = new BookDAO();
+        Vector<Book> books = bookstore.loadAll();
+        books.stream().forEach(book -> {
+                    Object[] row = {
+                            book.getID(),
+                            book.getAuthor(),
+                            book.getTitle(),
+                            book.getType(),
+                            book.getRating(),
+                            book.getID()};
+                    rows.add(row);
+                }
+        );
         Object[][] data = new Object[rows.size()][];
         for (int i = 0; i < rows.size(); i++) {
             data[i] = rows.get(i);

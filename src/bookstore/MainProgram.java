@@ -1,5 +1,6 @@
 package bookstore;
 
+import bookstore.db.DBConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,8 @@ import java.io.IOException;
 public class MainProgram extends JPanel {
 
     Logger logger = LoggerFactory.getLogger(MainProgram.class);
+    private static DBConnection conn = null;
+
 
 
     public MainProgram() {
@@ -88,5 +91,14 @@ public class MainProgram extends JPanel {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static DBConnection getDBConnection()
+    {
+        if(null == conn)
+        {
+            conn = new DBConnection();
+        }
+        return conn;
     }
 }

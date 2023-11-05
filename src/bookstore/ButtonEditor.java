@@ -1,12 +1,14 @@
 package bookstore;
 
+import bookstore.db.BookDAO;
 import bookstore.db.DBConnection;
 
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import static java.lang.Integer.parseInt;
 
 class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
@@ -55,7 +57,8 @@ class ButtonEditor extends DefaultCellEditor {
 
     public Object getCellEditorValue() {
         if (isPushed) {
-            db.deleteBook(bookID);
+            BookDAO bookstore = new BookDAO();
+            bookstore.remove(parseInt(bookID));
             bo.removeBook(bookRow);
             JOptionPane.showMessageDialog(button, bookTitle + " removed");
         }

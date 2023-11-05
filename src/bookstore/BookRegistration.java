@@ -1,6 +1,10 @@
 package bookstore;
 
+import bookstore.dataobjects.Book;
+import bookstore.dataobjects.Keyword;
+import bookstore.db.BookDAO;
 import bookstore.db.DBConnection;
+import bookstore.db.KeywordDAO;
 import bookstore.starrating.StarRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,8 +137,8 @@ public class BookRegistration implements ActionListener {
             & verifyIndex(ttype)
             & verifyIndex(tlanguage)) {
 
-            long id = addBookToDatabase();
-            addBookToOverview(id);
+            Book newBook = addBookToDatabase();
+            addBookToOverview(newBook);
             JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
             cleanForm();
 
@@ -143,32 +147,38 @@ public class BookRegistration implements ActionListener {
         }
     }
 
-    private void addBookToOverview(long id) {
-        Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
+    private void addBookToOverview(Book book) {
+        Object [] bookRow = new Object[]{book.getID(), tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar(), book.getID()};
         bo.addBook(bookRow);
     }
 
-    private long addBookToDatabase() {
-        return db.insertBook(tauthor.getText(),
+    private Book addBookToDatabase() {
+        BookDAO bookstore = new BookDAO();
+        Book book = new Book(tauthor.getText(),
                 ttitle.getText(),
                 tdescription.getText(),
                 tlanguage.getSelectedIndex(),
                 ttype.getSelectedIndex(),
                 trating.getStar(),
-                getKeyID(tkey1),
-                getKeyID(tkey2),
-                getKeyID(tkey3),
-                getKeyID(tkey4),
-                getKeyID(tkey5),
-                getKeyID(tkey6),
-                getKeyID(tkey7));
+                getKey(tkey1),
+                getKey(tkey2),
+                getKey(tkey3),
+                getKey(tkey4),
+                getKey(tkey5),
+                getKey(tkey6),
+                getKey(tkey7));
+        bookstore.store(book);
+        return book;
     }
 
-    private int getKeyID(JTextField tkey) {
+    private Keyword getKey(JTextField tkey) {
         if (!tkey.getText().isEmpty()) {
-            return db.insertKeyword(tkey.getText());
+            KeywordDAO keywordDAO = new KeywordDAO();
+            Keyword keyword = new Keyword(tkey.getText());
+            keywordDAO.store(keyword);
+            return keyword;
         } else {
-            return 0;
+            return null;
         }
     }
 

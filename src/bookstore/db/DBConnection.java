@@ -8,183 +8,134 @@ import java.sql.*;
 
 public class DBConnection {
 
+    Logger logger = LoggerFactory.getLogger(DBConnection.class);
+
     public static final int INVALID_ID = -1;
 
     private static IDBConnecter connecter = new DBConnecter();
 
-    public DBConnection() {}
-
-    Logger logger = LoggerFactory.getLogger(DBConnection.class);
-
-    public Connection connect() {
-        return DBConnection.connecter.connect();
+    public static void setDBConnecter(IDBConnecter connecter)
+    {
+        DBConnection.connecter = connecter;
     }
 
-    public ResultSet getKeyword(String key) {
-        String sql = String.format("SELECT * FROM keywords WHERE keyword='%s'", key);
-        try {
-            Connection conn = this.connect();
-            Statement s = conn.createStatement();
-            return s.executeQuery(sql);
-        } catch (SQLException e) {
-             e.printStackTrace();
-        }
-        return null;
+    public DBConnection()
+    {
     }
 
-    public ResultSet getBooks() {
-        String sql = "SELECT * FROM books";
-        try {
-            Connection conn = this.connect();
-            Statement s = conn.createStatement();
-            return s.executeQuery(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Connection getConnection() {
+        return connect();
     }
 
-    public int insertKeyword(String key) {
-        String sql = "INSERT INTO keywords(keyword) VALUES(?)";
+    public int insertQuery(String sql)
+    {
         int insertId = INVALID_ID;
-        ResultSet resultSet = getKeyword(key);
-
         try {
-            if ( resultSet == null|| !resultSet.next()) {
-                try (
-                    Connection conn = this.connect();
-                    PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setString(1, key);
-                    pstmt.executeUpdate();
-                    insertId = getKeyword(key).getInt("id");
-
-                } catch (SQLException e) {
-                    logger.info("During Query: \"%s\"%n", sql);
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    insertId = resultSet.getInt("id");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            Statement s = getConnection().createStatement();
+            s.execute(sanitizeQuery(sql));
+            if(s.getUpdateCount() > 0) {
+                insertId = lastInsertId();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
+            logger.info(String.format("During Query: \"%s\"", sql));
             e.printStackTrace();
-        } finally {
-            close();
         }
 
         return insertId;
     }
 
-    public long insertBook(String author, String title, String description, int language, int type, int rating, int key1, int key2, int key3, int key4, int key5, int key6, int key7) {
-        String sql = "INSERT INTO books(author, title, description, language, type, rating, key1, key2, key3, key4, key5, key6, key7) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public boolean deleteQuery(String sql)
+    {
+        boolean res = false;
+        try {
+            Statement s = getConnection().createStatement();
+            if(!s.execute(sanitizeQuery(sql)) && s.getUpdateCount() >= 0) {
+                res = true;
+            }
+            //close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        long id = 0;
-        try
-        {
-            Connection conn = this.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, author);
-            pstmt.setString(2, title);
-            pstmt.setString(3, description);
-            pstmt.setInt(4, language);
-            pstmt.setInt(5, type);
-            pstmt.setInt(6, rating);
-            pstmt.setInt(7, key1);
-            pstmt.setInt(8, key2);
-            pstmt.setInt(9, key3);
-            pstmt.setInt(10, key4);
-            pstmt.setInt(11, key5);
-            pstmt.setInt(12, key6);
-            pstmt.setInt(13, key7);
-            if(pstmt.executeUpdate() > 0)
-            {
-                if(pstmt.getGeneratedKeys().next())
+        return res;
+    }
+
+    public boolean query(String sql)
+    {
+        boolean res = false;
+        try {
+            Statement s = getConnection().createStatement();
+            if(!s.execute(sanitizeQuery(sql))) {
+                if (s.getUpdateCount() >= 0)
                 {
-                    id = pstmt.getGeneratedKeys().getLong(1);
+                    res = true;
                 }
+            } else {
+                res = true;
+            }
+            //close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
+    private Connection connect() {
+        return DBConnection.connecter.connect();
+    }
+
+    public static boolean isIdValid(int id)
+    {
+        return INVALID_ID != id;
+    }
+
+    private int lastInsertId()
+    {
+        try {
+            Statement s = getConnection().createStatement();
+            ResultSet set = s.executeQuery(sanitizeQuery("SELECT last_insert_rowid() as id"));
+            if(set.next())
+            {
+                return set.getInt("id");
             }
         } catch (SQLException e) {
-            logger.info("During Query: \"%s\"%n", sql);
             e.printStackTrace();
-        } finally {
-            close();
         }
 
-        return id;
+        return DBConnection.INVALID_ID;
     }
-
-    public boolean deleteBook(String bookID) {
-
-
-        boolean res = false;
-        try {
-            ResultSet book = getBook(bookID);
-            if (book != null) {
-                for (int i = 8; i <= 14; i++) {
-                    if (book.getInt(i) != 0) {
-                        deleteKeyword(book.getString(i));
-                    }
-                }
-            }
-
-            String sql = "DELETE FROM books WHERE id = " + bookID;
-            Statement s = this.connect().createStatement();
-
-            if(s.execute(sql) && s.getUpdateCount() >= 0) {
-                res = true;
-            }
-            //close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return res;
-    }
-
-    public boolean deleteKeyword(String keywordsID)
-    {
-        String sql = "DELETE FROM keywords WHERE id = " + keywordsID;
-
-        boolean res = false;
-        try {
-            Statement s = this.connect().createStatement();
-
-            if(s.execute(sql) && s.getUpdateCount() >= 0) {
-                res = true;
-            }
-            //close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return res;
-    }
-
-
-    public ResultSet getBook(String bookID)
-    {
-        try {
-            String sql = "SELECT * FROM books WHERE id = " + bookID;
-            Statement s = this.connect().createStatement();
-
-            return  s.executeQuery(sql);
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    };
 
     public boolean close()
     {
         return connecter.disconnect();
     }
 
+    private String sanitizeQuery(String s)
+    {
+        s = s.trim();
+        if(!s.endsWith(";"))
+        {
+            s += ";";
+        }
 
+        return s;
+    }
+
+    public ResultSet selectQuery(String sql)
+    {
+        try {
+            Statement s = getConnection().createStatement();
+            return s.executeQuery(sanitizeQuery(sql));
+        }
+        catch (SQLException e) {
+            logger.error(String.format("During Query :\"%s\"", sql));
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
