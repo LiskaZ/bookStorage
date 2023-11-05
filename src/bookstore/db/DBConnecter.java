@@ -1,10 +1,16 @@
 package bookstore.db;
 
+import bookstore.MainProgram;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnecter implements IDBConnecter {
+
+    Logger logger = LoggerFactory.getLogger(DBConnecter.class);
 
     private Connection conn = null;
 
@@ -16,7 +22,7 @@ public class DBConnecter implements IDBConnecter {
                     String url = "jdbc:sqlite:bookStore.db";
                     // create a connection to the database
                     conn = DriverManager.getConnection(url);
-                    System.out.println("Connection to SQLite has been established.");
+                    logger.info("Connection to SQLite has been established.");
                 } catch (
                         SQLException e) {
                     e.printStackTrace();
@@ -36,7 +42,7 @@ public class DBConnecter implements IDBConnecter {
             try {
                 conn.close();
                 conn = null;
-                System.out.println("Connection to SQLite has been closed.");
+                logger.info("Connection to SQLite has been closed.");
             } catch (SQLException e) {
                 e.printStackTrace();
                 res = false;

@@ -1,11 +1,17 @@
 package bookstore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class MainProgram extends JPanel {
+
+    Logger logger = LoggerFactory.getLogger(MainProgram.class);
+
 
     public MainProgram() {
         super(new GridLayout(1, 1));
@@ -20,8 +26,8 @@ public class MainProgram extends JPanel {
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
         bo.setPreferredSize(new Dimension(700, 700));
 
-        JComponent panel2 = makeTextPanel("Search Books");
-        tabbedPane.addTab("Search Books", icon, panel2,
+        BookSearch bs = new BookSearch();
+        tabbedPane.addTab("Search Books", icon, bs,
                 "Search books in database");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
@@ -53,7 +59,7 @@ public class MainProgram extends JPanel {
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         } else {
-            System.err.println("Couldn't find file: " + "images/book.png");
+            logger.error("Couldn't find file: " + "images/book.png");
             return null;
         }
     }

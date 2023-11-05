@@ -1,5 +1,9 @@
 package bookstore.db;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import java.sql.*;
 
 public class DBConnection {
@@ -9,6 +13,8 @@ public class DBConnection {
     private static IDBConnecter connecter = new DBConnecter();
 
     public DBConnection() {}
+
+    Logger logger = LoggerFactory.getLogger(DBConnection.class);
 
     public Connection connect() {
         return DBConnection.connecter.connect();
@@ -53,7 +59,7 @@ public class DBConnection {
                     insertId = getKeyword(key).getInt("id");
 
                 } catch (SQLException e) {
-                    System.out.printf("During Query: \"%s\"%n", sql);
+                    logger.info("During Query: \"%s\"%n", sql);
                     e.printStackTrace();
                 }
             } else {
@@ -101,7 +107,7 @@ public class DBConnection {
                 }
             }
         } catch (SQLException e) {
-            System.out.printf("During Query: \"%s\"%n", sql);
+            logger.info("During Query: \"%s\"%n", sql);
             e.printStackTrace();
         } finally {
             close();

@@ -2,6 +2,8 @@ package bookstore;
 
 import bookstore.db.DBConnection;
 import bookstore.starrating.StarRating;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -10,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class BookRegistration implements ActionListener {
+    Logger logger = LoggerFactory.getLogger(BookRegistration.class);
+
 
     private JTextField tauthor;
     private JTextField ttitle;
@@ -42,56 +46,42 @@ public class BookRegistration implements ActionListener {
 
     public JComponent createBookRegistration(String text) {
         JPanel panel = new JPanel(false);
+        panel.setLayout(new GridLayout(0, 1));
 
         JLabel title = new JLabel(text);
         title.setHorizontalAlignment(JLabel.CENTER);
         title.setFont(new Font("TimesRoman", Font.BOLD, 20));
         title.setLocation(150, 50);
+        panel.add(title);
 
+        createForm(panel);
 
-        JLabel author = new JLabel("Authors name");
-        author.setFont(new Font("Arial", Font.PLAIN, 20));
-        author.setSize(100, 20);
-        author.setLocation(100, 100);
+        return panel;
+    }
 
-        this.tauthor = new JTextField();
-        tauthor.setFont(new Font("Arial", Font.PLAIN, 15));
-        tauthor.setSize(100, 16);
-        tauthor.setLocation(200, 100);
+    private void createForm(JPanel panel) {
+        JLabel author = createLabel("Authors name");
+        JLabel title1 = createLabel("Title");
+        JLabel description = createLabel("Description");
+        JLabel language = createLabel("Language");
+        JLabel key1 = createLabel("Keyword 1");
+        JLabel key2 = createLabel("Keyword 2");
+        JLabel key3 = createLabel("Keyword 3");
+        JLabel key4 = createLabel("Keyword 4");
+        JLabel key5 = createLabel("Keyword 5");
+        JLabel key6 = createLabel("Keyword 6");
+        JLabel key7 = createLabel("Keyword 7");
 
-        JLabel title1 = new JLabel("Title");
-        title1.setFont(new Font("Arial", Font.PLAIN, 20));
-        title1.setSize(100, 20);
-        title1.setLocation(100, 150);
-
-        this.ttitle = new JTextField();
-        ttitle.setFont(new Font("Arial", Font.PLAIN, 15));
-        ttitle.setSize(100, 16);
-        ttitle.setLocation(200, 150);
-
-        JLabel description = new JLabel("Description");
-        description.setFont(new Font("Arial", Font.PLAIN, 20));
-        description.setSize(100, 20);
-        description.setLocation(100, 200);
-
-        this.tdescription = new JTextField();
-        tdescription.setFont(new Font("Arial", Font.PLAIN, 15));
-        tdescription.setSize(100, 16);
-        tdescription.setLocation(200, 200);
-
-        JLabel language = new JLabel("Language");
-        language.setFont(new Font("Arial", Font.PLAIN, 20));
-        language.setSize(100, 20);
-        language.setLocation(100, 250);
-
+        this.tauthor = createTextField();
+        this.ttitle = createTextField();
+        this.tdescription = createTextField();
         this.tlanguage = new JComboBox<>(languages);
+
         tlanguage.setFont(new Font("Arial", Font.PLAIN, 15));
         tlanguage.setSize(60, 16);
         tlanguage.setLocation(200, 250);
 
-        JLabel type = new JLabel("Type");
-        type.setFont(new Font("Arial", Font.PLAIN, 20));
-        type.setSize(100, 20);
+        JLabel type = createLabel("Type");
         type.setLocation(100, 300);
 
         this.ttype = new JComboBox<>(types);
@@ -99,99 +89,21 @@ public class BookRegistration implements ActionListener {
         ttype.setSize(100, 16);
         ttype.setLocation(200, 300);
 
-        JLabel rating = new JLabel("Rating");
-        rating.setFont(new Font("Arial", Font.PLAIN, 20));
-        rating.setSize(100, 20);
+        JLabel rating = createLabel("Rating");
         rating.setLocation(100, 350);
-
         this.trating = new StarRating();
 
-        JLabel key1 = new JLabel("Keyword 1");
-        key1.setFont(new Font("Arial", Font.PLAIN, 20));
-        key1.setSize(100, 20);
-        key1.setLocation(100, 200);
-
-        this.tkey1 = new JTextField();
-        tkey1.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey1.setSize(100, 16);
-        tkey1.setLocation(200, 200);
-
-        JLabel key2 = new JLabel("Keyword 2");
-        key2.setFont(new Font("Arial", Font.PLAIN, 20));
-        key2.setSize(100, 20);
-        key2.setLocation(100, 200);
-
-        this.tkey2 = new JTextField();
-        tkey2.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey2.setSize(100, 16);
-        tkey2.setLocation(200, 200);
-
-        JLabel key3 = new JLabel("Keyword 3");
-        key3.setFont(new Font("Arial", Font.PLAIN, 20));
-        key3.setSize(100, 20);
-        key3.setLocation(100, 200);
-
-        this.tkey3 = new JTextField();
-        tkey3.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey3.setSize(100, 16);
-        tkey3.setLocation(200, 200);
-
-        JLabel key4 = new JLabel("Keyword 4");
-        key4.setFont(new Font("Arial", Font.PLAIN, 20));
-        key4.setSize(100, 16);
-        key4.setLocation(100, 200);
-
-        this.tkey4 = new JTextField();
-        tkey4.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey4.setSize(100, 16);
-        tkey4.setLocation(200, 200);
-
-        JLabel key5 = new JLabel("Keyword 5");
-        key5.setFont(new Font("Arial", Font.PLAIN, 20));
-        key5.setSize(100, 20);
-        key5.setLocation(100, 200);
-
-        this.tkey5 = new JTextField();
-        tkey5.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey5.setSize(100, 16);
-        tkey5.setLocation(200, 200);
-
-        JLabel key6 = new JLabel("Keyword 6");
-        key6.setFont(new Font("Arial", Font.PLAIN, 20));
-        key6.setSize(100, 20);
-        key6.setLocation(100, 200);
-
-        this.tkey6 = new JTextField();
-        tkey6.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey6.setSize(100, 16);
-        tkey6.setLocation(200, 200);
-
-        JLabel key7 = new JLabel("Keyword 7");
-        key7.setFont(new Font("Arial", Font.PLAIN, 20));
-        key7.setSize(100, 20);
-        key7.setLocation(100, 200);
-
-        this.tkey7 = new JTextField();
-        tkey7.setFont(new Font("Arial", Font.PLAIN, 15));
-        tkey7.setSize(100, 16);
-        tkey7.setLocation(200, 200);
-
-        this.sub = new JButton("Submit");
-        sub.setFont(new Font("Arial", Font.PLAIN, 15));
-        sub.setSize(100, 20);
-        sub.setLocation(120, 450);
-        sub.addActionListener(this);
-
-        JButton reset = new JButton("Reset");
-        reset.setFont(new Font("Arial", Font.PLAIN, 15));
-        reset.setSize(100, 20);
-        reset.setLocation(220, 450);
-        reset.addActionListener(this);
+        this.tkey1 = createTextField();
+        this.tkey2 = createTextField();
+        this.tkey3 = createTextField();
+        this.tkey4 = createTextField();
+        this.tkey5 = createTextField();
+        this.tkey6 = createTextField();
+        this.tkey7 = createTextField();
+        this.sub = createButton("Submit");
+        JButton reset = createButton("Reset");
 
 
-
-        panel.setLayout(new GridLayout(0, 1));
-        panel.add(title);
         panel.add(author);
         panel.add(tauthor);
         panel.add(title1);
@@ -220,9 +132,31 @@ public class BookRegistration implements ActionListener {
         panel.add(tkey7);
         panel.add(sub);
         panel.add(reset);
+    }
 
+    private JButton createButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setFont(new Font("Arial", Font.PLAIN, 15));
+        btn.setSize(100, 20);
+        btn.setLocation(220, 450);
+        btn.addActionListener(this);
+        return btn;
+    }
 
-        return panel;
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.PLAIN, 20));
+        label.setSize(100, 20);
+        label.setLocation(100, 200);
+        return label;
+    }
+
+    private JTextField createTextField() {
+        JTextField textfield = new JTextField();
+        textfield.setFont(new Font("Arial", Font.PLAIN, 15));
+        textfield.setSize(100, 16);
+        textfield.setLocation(200, 200);
+        return textfield;
     }
 
     public void actionPerformed(ActionEvent e)
@@ -262,14 +196,13 @@ public class BookRegistration implements ActionListener {
                 JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
                 Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
                 bo.addBook(bookRow);
-                System.out.println("Action performed");
                 cleanForm();
             } else {
-                System.out.println("Please check your form input!");
+                logger.info("Please check your form input!");
             }
             filledForm = 0;
         } else {
-            System.out.println(("Action deleted"));
+            logger.info(("Action deleted"));
             cleanForm();
         }
     }
@@ -288,7 +221,6 @@ public class BookRegistration implements ActionListener {
         } else {
             filledForm += 1;
             comboBox.setBorder(new LineBorder(Color.black,1));
-
         }
     }
 
