@@ -110,12 +110,24 @@ public class DBConnection {
         return id;
     }
 
-    public boolean deleteQuery(String sql)
-    {
+    public boolean deleteBook(String bookID) {
+
+
         boolean res = false;
         try {
-            Statement s = connect().createStatement();
-            if(!s.execute(sql) && s.getUpdateCount() >= 0) {
+            ResultSet book = getBook(bookID);
+            if (book != null) {
+                for (int i = 8; i <= 14; i++) {
+                    if (book.getInt(i) != 0) {
+                        deleteKeyword(book.getString(i));
+                    }
+                }
+            }
+
+            String sql = "DELETE FROM books WHERE id = " + bookID;
+            Statement s = this.connect().createStatement();
+
+            if(s.execute(sql) && s.getUpdateCount() >= 0) {
                 res = true;
             }
             //close();
@@ -127,23 +139,45 @@ public class DBConnection {
         return res;
     }
 
-    public boolean close()
+    public boolean deleteKeyword(String keywordsID)
     {
-        return connecter.disconnect();
-    }
+        String sql = "DELETE FROM keywords WHERE id = " + keywordsID;
 
-    public ResultSet selectQuery(String sql)
-    {
+        boolean res = false;
         try {
-            Statement s = connect().createStatement();
-            return s.executeQuery(sql);
+            Statement s = this.connect().createStatement();
+
+            if(s.execute(sql) && s.getUpdateCount() >= 0) {
+                res = true;
+            }
+            //close();
         }
         catch (SQLException e) {
-            System.err.println(String.format("During Query :\"%s\"", sql));
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
+
+    public ResultSet getBook(String bookID)
+    {
+        try {
+            String sql = "SELECT * FROM books WHERE id = " + bookID;
+            Statement s = this.connect().createStatement();
+
+            return  s.executeQuery(sql);
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
 
         return null;
+    };
+
+    public boolean close()
+    {
+        return connecter.disconnect();
     }
 
 

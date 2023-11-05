@@ -5,8 +5,6 @@ import bookstore.db.DBConnection;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,8 +39,15 @@ public class BookOverview extends JPanel {
                 "Delete"
         };
 
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // make read only fields except column 0,13,14
+                return column == 5 ? true: false;
+            }
+        };
         this.bookOverwiew = new JTable(tableModel);
+
         Object [][] books = getBooks();
         for (Object[] book : books) {
             tableModel.addRow(book);
@@ -54,7 +59,7 @@ public class BookOverview extends JPanel {
         bookOverwiew.getColumn("Delete").setMaxWidth(40);
         bookOverwiew.getColumn("Delete").setCellRenderer(new ButtonRenderer());
         bookOverwiew.getColumn("Delete").setCellEditor(
-                new ButtonEditor(new JCheckBox()));
+                new ButtonEditor(new JCheckBox(), this));
         this.add(bookOverwiew.getTableHeader(), CENTER_ALIGNMENT);
         this.add(bookOverwiew, CENTER_ALIGNMENT);
     }
@@ -63,10 +68,10 @@ public class BookOverview extends JPanel {
         tableModel.addRow(book);
     }
 
-//    public void removeBook(Object[] book) {
-//        DefaultTableModel model = (DefaultTableModel) bookOverwiew.getModel();
-//        model.removeRow(book);
-//    }
+    public void removeBook(int bookRow) {
+        DefaultTableModel model = (DefaultTableModel) bookOverwiew.getModel();
+        model.removeRow(bookRow);
+    }
 
     private Object[][] getBooks() {
         DBConnection db = new DBConnection();
@@ -95,14 +100,5 @@ public class BookOverview extends JPanel {
 
         return data;
     }
-
-    private Object createDeleteButton() {
-        JButton deleteBtn = new JButton("x");
-        deleteBtn.setFont(new Font("Arial", Font.PLAIN, 15));
-        deleteBtn.setSize(20, 20);
-
-        deleteBtn.addActionListener(e -> System.out.println("DeleteButton clicked"));
-        return deleteBtn;
-    };
 
 }

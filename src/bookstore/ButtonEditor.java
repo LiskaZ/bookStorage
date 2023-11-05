@@ -1,5 +1,7 @@
 package bookstore;
 
+import bookstore.db.DBConnection;
+
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
@@ -8,22 +10,29 @@ import java.awt.event.ActionListener;
 
 class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
+    private final DBConnection db;
+    private final BookOverview bo;
+
 
     private String bookID;
     private String bookTitle;
+    private int bookRow;
 
 
     private boolean isPushed;
 
-    public ButtonEditor(JCheckBox checkBox) {
+    public ButtonEditor(JCheckBox checkBox, BookOverview bookOverview) {
         super(checkBox);
         button = new JButton();
         button.setOpaque(true);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
+                isPushed = true;
+                getCellEditorValue();
             }
         });
+        this.db = new DBConnection();
+        bo = bookOverview;
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value,
@@ -37,6 +46,7 @@ class ButtonEditor extends DefaultCellEditor {
         }
         bookTitle = table.getValueAt(row, column-4).toString();
         bookID = (value == null) ? "" : value.toString();
+        bookRow = row;
         button.setText("x");
         isPushed = true;
 
@@ -45,6 +55,8 @@ class ButtonEditor extends DefaultCellEditor {
 
     public Object getCellEditorValue() {
         if (isPushed) {
+            db.deleteBook(bookID);
+            bo.removeBook(bookRow);
             JOptionPane.showMessageDialog(button, bookTitle + " removed");
         }
         isPushed = false;
