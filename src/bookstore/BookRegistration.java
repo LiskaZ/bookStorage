@@ -17,19 +17,19 @@ public class BookRegistration implements ActionListener {
     Logger logger = LoggerFactory.getLogger(BookRegistration.class);
 
 
-    private JTextField tauthor;
-    private JTextField ttitle;
-    private JTextField tdescription;
+    private JTextField tauthor = createTextField();
+    private JTextField ttitle  = createTextField();
+    private JTextField tdescription  = createTextField();
     private JComboBox<String> tlanguage;
     private JComboBox<String> ttype;
     private StarRating trating;
-    private JTextField tkey1;
-    private JTextField tkey2;
-    private JTextField tkey3;
-    private JTextField tkey4;
-    private JTextField tkey5;
-    private JTextField tkey6;
-    private JTextField tkey7;
+    private JTextField tkey1  = createTextField();
+    private JTextField tkey2  = createTextField();
+    private JTextField tkey3  = createTextField();
+    private JTextField tkey4  = createTextField();
+    private JTextField tkey5  = createTextField();
+    private JTextField tkey6  = createTextField();
+    private JTextField tkey7  = createTextField();
     private JButton sub;
     private JButton reset;
 
@@ -72,6 +72,8 @@ public class BookRegistration implements ActionListener {
         JLabel title1 = createLabel("Title");
         JLabel description = createLabel("Description");
         JLabel language = createLabel("Language");
+        JLabel type = createLabel("Type");
+        JLabel rating = createLabel("Rating");
         JLabel key1 = createLabel("Keyword 1");
         JLabel key2 = createLabel("Keyword 2");
         JLabel key3 = createLabel("Keyword 3");
@@ -80,16 +82,11 @@ public class BookRegistration implements ActionListener {
         JLabel key6 = createLabel("Keyword 6");
         JLabel key7 = createLabel("Keyword 7");
 
-        this.tauthor = createTextField();
-        this.ttitle = createTextField();
-        this.tdescription = createTextField();
         this.tlanguage = new JComboBox<>(languages);
-
         tlanguage.setFont(new Font("Arial", Font.PLAIN, 15));
         tlanguage.setSize(60, 16);
         tlanguage.setLocation(200, 250);
 
-        JLabel type = createLabel("Type");
         type.setLocation(100, 300);
 
         this.ttype = new JComboBox<>(types);
@@ -97,17 +94,8 @@ public class BookRegistration implements ActionListener {
         ttype.setSize(100, 16);
         ttype.setLocation(200, 300);
 
-        JLabel rating = createLabel("Rating");
         rating.setLocation(100, 350);
         this.trating = new StarRating();
-
-        this.tkey1 = createTextField();
-        this.tkey2 = createTextField();
-        this.tkey3 = createTextField();
-        this.tkey4 = createTextField();
-        this.tkey5 = createTextField();
-        this.tkey6 = createTextField();
-        this.tkey7 = createTextField();
 
         panel.add(author);
         panel.add(tauthor);
