@@ -50,10 +50,7 @@ public class BookRegistration implements ActionListener {
         JPanel panel = new JPanel(false);
         panel.setLayout(new GridLayout(0, 1));
 
-        JLabel title = new JLabel(text);
-        title.setHorizontalAlignment(JLabel.CENTER);
-        title.setFont(new Font("TimesRoman", Font.BOLD, 20));
-        title.setLocation(150, 50);
+        JLabel title = createTitle(text);
         panel.add(title);
 
         createForm(panel);

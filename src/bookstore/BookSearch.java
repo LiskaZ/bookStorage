@@ -4,26 +4,29 @@ import javax.swing.*;
 import java.awt.*;
 
 import static bookstore.util.BookStoreComponents.createTextField;
+import static bookstore.util.BookStoreComponents.createTitle;
 
 public class BookSearch extends JPanel {
     private JButton searchBtn = new JButton("Search");
     private JTextField searchable = createTextField();
-
-
+    private JTable result = new JTable();
+    private JScrollPane scrollPane = new JScrollPane(result);
 
     public BookSearch() {
         super();
 
         createBookSearch("Search");
-    };
+        addSearch();
+    }
+
+    private void addSearch() {
+        searchBtn.addActionListener(e -> System.out.println("SUCHE!"));
+    }
 
     public void createBookSearch(String text) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-        JLabel title = new JLabel(text);
-        title.setHorizontalAlignment(JLabel.CENTER);
-        title.setFont(new Font("TimesRoman", Font.BOLD, 20));
-        title.setLocation(150, 50);
+        JLabel title = createTitle(text);
 
         JPanel searchPanel = new JPanel();
         searchPanel.setPreferredSize(new Dimension(120,20));
@@ -32,15 +35,9 @@ public class BookSearch extends JPanel {
         searchPanel.add(searchable);
         searchPanel.add(searchBtn);
 
-        JTable result = new JTable();
-        JScrollPane scrollPane = new JScrollPane(result);
-        searchBtn.addActionListener(e -> System.out.println("SUCHE!"));
-
-
         this.add(title, CENTER_ALIGNMENT);
         this.add(Box.createHorizontalGlue());
         this.add(searchPanel);
         this.add(scrollPane);
     }
-
 }

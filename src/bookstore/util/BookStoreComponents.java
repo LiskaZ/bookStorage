@@ -28,4 +28,12 @@ public class BookStoreComponents {
         textfield.setLocation(200, 200);
         return textfield;
     }
+
+    public static JLabel createTitle(String text) {
+        JLabel label = new JLabel(text);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setFont(new Font("TimesRoman", Font.BOLD, 20));
+        label.setLocation(150, 50);
+        return label;
+    }
 }
