@@ -26,6 +26,7 @@ public class BookRegistration implements ActionListener {
     private JTextField tkey7;
     private JButton sub;
     private final DBConnection db;
+    private final BookOverview bo;
 
     private final String[] languages
             = { "select language", "german", "english" };
@@ -34,8 +35,9 @@ public class BookRegistration implements ActionListener {
 
     int filledForm = 0;
 
-    public BookRegistration() {
+    public BookRegistration(BookOverview bo) {
         this.db = new DBConnection();
+        this.bo = bo;
     }
 
     public JComponent createBookRegistration(String text) {
@@ -243,7 +245,7 @@ public class BookRegistration implements ActionListener {
                 int keyID6 = getKeyID(tkey6);
                 int keyID7 = getKeyID(tkey7);
 
-                db.insertBook(tauthor.getText(),
+                long id = db.insertBook(tauthor.getText(),
                         ttitle.getText(),
                         tdescription.getText(),
                         tlanguage.getSelectedIndex(),
@@ -258,6 +260,8 @@ public class BookRegistration implements ActionListener {
                         keyID7);
 
                 JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
+                Object [] bookRow = new Object[]{id, tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar()};
+                bo.addBook(bookRow);
                 System.out.println("Action performed");
                 cleanForm();
             } else {

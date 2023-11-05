@@ -16,19 +16,19 @@ public class MainProgram extends JPanel {
         BookOverview bo = new BookOverview();
         bo.setOpaque(true);
         tabbedPane.addTab("Overview", icon, bo,
-                "Does nothing");
+                "Show all books in database");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
         bo.setPreferredSize(new Dimension(700, 700));
 
         JComponent panel2 = makeTextPanel("Search Books");
         tabbedPane.addTab("Search Books", icon, panel2,
-                "Does twice as much nothing");
+                "Search books in database");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        BookRegistration br = new BookRegistration();
+        BookRegistration br = new BookRegistration(bo);
         JComponent panel3 = br.createBookRegistration("Add Book");
         tabbedPane.addTab("Add Book", icon, panel3,
-                "Still does nothing");
+                "Add a new book to the database");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 

@@ -72,9 +72,10 @@ public class DBConnection {
         return insertId;
     }
 
-    public void insertBook(String author, String title, String description, int language, int type, int rating, int key1, int key2, int key3, int key4, int key5, int key6, int key7) {
+    public long insertBook(String author, String title, String description, int language, int type, int rating, int key1, int key2, int key3, int key4, int key5, int key6, int key7) {
         String sql = "INSERT INTO books(author, title, description, language, type, rating, key1, key2, key3, key4, key5, key6, key7) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
+        long id = 0;
         try
         {
             Connection conn = this.connect();
@@ -92,13 +93,21 @@ public class DBConnection {
             pstmt.setInt(11, key5);
             pstmt.setInt(12, key6);
             pstmt.setInt(13, key7);
-            pstmt.executeUpdate();
+            if(pstmt.executeUpdate() > 0)
+            {
+                if(pstmt.getGeneratedKeys().next())
+                {
+                    id = pstmt.getGeneratedKeys().getLong(1);
+                }
+            }
         } catch (SQLException e) {
             System.out.printf("During Query: \"%s\"%n", sql);
             e.printStackTrace();
         } finally {
             close();
         }
+
+        return id;
     }
 
     public boolean deleteQuery(String sql)

@@ -3,12 +3,18 @@ package bookstore;
 import bookstore.db.DBConnection;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class BookOverview extends JPanel {
+
+    JTable bookOverwiew;
+    DefaultTableModel tableModel;
 
     public BookOverview() {
         super();
@@ -31,17 +37,33 @@ public class BookOverview extends JPanel {
                 "Author",
                 "Title",
                 "Type",
-                "Rating"};
+                "Rating",
+                "Delete"
+        };
 
-        JTable table = new JTable(getBooks(), columnNames);
-        table.setRowHeight(30);
-        table.getColumn("ID").setMaxWidth(25);
-        table.getColumn("Rating").setMaxWidth(40);
-        table.getColumn("Type").setMaxWidth(35);
-
-        this.add(table.getTableHeader(), CENTER_ALIGNMENT);
-        this.add(table, CENTER_ALIGNMENT);
+        tableModel = new DefaultTableModel(columnNames, 0);
+        this.bookOverwiew = new JTable(tableModel);
+        Object [][] books = getBooks();
+        for (Object[] book : books) {
+            tableModel.addRow(book);
+        }
+        bookOverwiew.setRowHeight(30);
+        bookOverwiew.getColumn("ID").setMaxWidth(25);
+        bookOverwiew.getColumn("Rating").setMaxWidth(40);
+        bookOverwiew.getColumn("Type").setMaxWidth(35);
+        bookOverwiew.getColumn("Delete").setMaxWidth(35);
+        this.add(bookOverwiew.getTableHeader(), CENTER_ALIGNMENT);
+        this.add(bookOverwiew, CENTER_ALIGNMENT);
     }
+
+    public void addBook(Object[] book) {
+        tableModel.addRow(book);
+    }
+
+//    public void removeBook(Object[] book) {
+//        DefaultTableModel model = (DefaultTableModel) bookOverwiew.getModel();
+//        model.removeRow(book);
+//    }
 
     private Object[][] getBooks() {
         DBConnection db = new DBConnection();
@@ -50,7 +72,8 @@ public class BookOverview extends JPanel {
         ResultSet books = db.getBooks();
         try {
             while (books.next()) {
-                String[] row = {books.getString("id"),
+                String[] row = {
+                        books.getString("id"),
                         books.getString("author"),
                         books.getString("title"),
                         books.getString("type"),
