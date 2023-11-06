@@ -5,6 +5,8 @@ import bookstore.dataobjects.Keyword;
 import bookstore.db.BookDAO;
 import bookstore.db.DBConnection;
 import bookstore.db.KeywordDAO;
+import bookstore.isbn.ISBNBook;
+import bookstore.isbn.OpenLibraryJSONQuery;
 import bookstore.starrating.StarRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,9 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.concurrent.ExecutionException;
 
 import static bookstore.util.BookStoreComponents.*;
 
@@ -22,6 +27,7 @@ public class BookRegistration implements ActionListener {
 
     private JTextField tauthor = createTextField();
     private JTextField ttitle  = createTextField();
+    private JTextField tisbn  = createTextField();
     private JTextField tdescription  = createTextField();
     private JComboBox<String> tlanguage;
     private JComboBox<String> ttype;
@@ -35,6 +41,8 @@ public class BookRegistration implements ActionListener {
     private JTextField tkey7  = createTextField();
     private JButton sub;
     private JButton reset;
+
+    private JButton isbnQuery;
 
     private final DBConnection db;
     private final BookOverview bo;
@@ -50,13 +58,16 @@ public class BookRegistration implements ActionListener {
     }
 
     public JComponent createBookRegistration(String text) {
-        JPanel panel = new JPanel(false);
-        panel.setLayout(new GridLayout(0, 1));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
 
         JLabel title = createTitle(text);
-        panel.add(title);
+        mainPanel.add(title, BorderLayout.PAGE_START);
 
-        createForm(panel);
+        mainPanel.add(createForm(), BorderLayout.CENTER);
+
+        JPanel actionPanel = new JPanel();
+        actionPanel.setLayout(new FlowLayout());
 
         this.sub = createButton("Submit");
         sub.addActionListener(e -> actionPerformed(e));
@@ -64,15 +75,27 @@ public class BookRegistration implements ActionListener {
         this.reset = createButton("Reset");
         reset.addActionListener(e -> cleanForm());
 
-        panel.add(sub);
-        panel.add(reset);
+        this.isbnQuery = createButton("Load From ISBN");
+        isbnQuery.addActionListener(e -> loadDataFromISBN());
 
-        return panel;
+        actionPanel.add(sub);
+        actionPanel.add(reset);
+        actionPanel.add(isbnQuery);
+
+        mainPanel.add(actionPanel, BorderLayout.PAGE_END);
+
+        return mainPanel;
     }
 
-    private void createForm(JPanel panel) {
+    private JPanel createForm() {
+
+        JPanel panel = new JPanel(false);
+        GridLayout layout = new GridLayout(0, 1);
+        panel.setLayout(layout);
+
         JLabel author = createLabel("Authors name");
         JLabel title1 = createLabel("Title");
+        JLabel isbn = createLabel("ISBN");
         JLabel description = createLabel("Description");
         JLabel language = createLabel("Language");
         JLabel type = createLabel("Type");
@@ -100,10 +123,32 @@ public class BookRegistration implements ActionListener {
         rating.setLocation(100, 350);
         this.trating = new StarRating();
 
+        this.tisbn.addKeyListener(new KeyListener() {
+
+            private boolean pressedHere = false;
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    pressedHere = true;
+                }
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER && pressedHere) {
+                    pressedHere = false;
+                    loadDataFromISBN(((JTextField)e.getSource()).getText());
+                }
+            }
+        });
+
         panel.add(author);
         panel.add(tauthor);
         panel.add(title1);
         panel.add(ttitle);
+        panel.add(isbn);
+        panel.add(tisbn);
         panel.add(description);
         panel.add(tdescription);
         panel.add(language);
@@ -126,6 +171,8 @@ public class BookRegistration implements ActionListener {
         panel.add(tkey6);
         panel.add(key7);
         panel.add(tkey7);
+
+        return panel;
     }
 
     public void actionPerformed(ActionEvent e)
@@ -234,5 +281,61 @@ public class BookRegistration implements ActionListener {
         tkey5.setText(def);
         tkey6.setText(def);
         tkey7.setText(def);
+    }
+
+    private void loadDataFromISBN() {
+        loadDataFromISBN(tisbn.getText());
+    }
+
+    private void loadDataFromISBN(String isbn) {
+        if(isValidISBN(isbn)){
+            executeLoadDataInOwnThread(isbn);
+        }
+        else {
+            JOptionPane.showMessageDialog(tisbn,
+                    "A valid ISBN consists only of numbers and is either 10 or 13 chars long",
+                    "ISBN Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean isValidISBN(String isbn){
+        return isbn.matches("[0-9]{10}") || isbn.matches("[0-9]{13}");
+    }
+
+    private void executeLoadDataInOwnThread(String isbn)
+    {
+        SwingWorker w = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                return OpenLibraryJSONQuery.queryBook(isbn);
+            }
+
+            protected void done()
+            {
+                try {
+                    evaluateISBNLoadResult((ISBNBook)get());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        w.execute();
+    }
+
+    private  void evaluateISBNLoadResult(ISBNBook b)
+    {
+        if(b.isValid()) {
+            tauthor.setText(b.author);
+            ttitle.setText(b.title);
+        }
+        else {
+            JOptionPane.showMessageDialog(tisbn,
+                    String.format("No data for the book with ISBN \"%s\" found.", b.ISBN),
+                    "Data Load Error",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }
