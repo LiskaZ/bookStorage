@@ -23,20 +23,29 @@ public class BookSearch extends JPanel {
     }
 
     public void createBookSearch(String text) {
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.setLayout(new BorderLayout(0,0));
+        add(createTitle(text), BorderLayout.PAGE_START);
+        add(createContentPanel(), BorderLayout.CENTER);
+    }
 
-        JLabel title = createTitle(text);
-
+    private JPanel createSearchPanel(){
         JPanel searchPanel = new JPanel();
-        searchPanel.setPreferredSize(new Dimension(120,20));
+        searchPanel.setPreferredSize(new Dimension(120,25));
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.LINE_AXIS));
 
         searchPanel.add(searchable);
         searchPanel.add(searchBtn);
 
-        this.add(title, CENTER_ALIGNMENT);
-        this.add(Box.createHorizontalGlue());
-        this.add(searchPanel);
-        this.add(scrollPane);
+        return searchPanel;
+    }
+
+    private JPanel createContentPanel(){
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BorderLayout());
+
+        contentPanel.add(createSearchPanel(), BorderLayout.PAGE_START);
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return contentPanel;
     }
 }
