@@ -1,7 +1,12 @@
 package bookstore;
 
+import bookstore.dataobjects.Keyword;
+import bookstore.db.BookDAO;
+import bookstore.db.KeywordDAO;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.Vector;
 
 import static bookstore.util.BookStoreComponents.*;
 
@@ -19,7 +24,10 @@ public class BookSearch extends JPanel {
     }
 
     private void addSearch() {
-        searchBtn.addActionListener(e -> System.out.println("SUCHE!"));
+        searchBtn.addActionListener(e -> {
+            BookDAO bookDAO = new BookDAO();
+            System.out.println(bookDAO.findBooksByKeyword(searchable.getText()));
+        });
     }
 
     public void createBookSearch(String text) {

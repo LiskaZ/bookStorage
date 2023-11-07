@@ -18,6 +18,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import static bookstore.util.BookStoreComponents.*;
@@ -207,14 +210,15 @@ public class BookRegistration implements ActionListener {
                 tlanguage.getSelectedIndex(),
                 ttype.getSelectedIndex(),
                 trating.getStar(),
-                getKey(tkey1),
-                getKey(tkey2),
-                getKey(tkey3),
-                getKey(tkey4),
-                getKey(tkey5),
-                getKey(tkey6),
-                getKey(tkey7));
+                new Vector<>(Arrays.asList(new Keyword(tkey1.getText()),
+                        new Keyword(tkey2.getText()),
+                        new Keyword(tkey3.getText()),
+                        new Keyword(tkey4.getText()),
+                        new Keyword(tkey5.getText()),
+                        new Keyword(tkey6.getText()),
+                        new Keyword(tkey7.getText()))));
         bookstore.store(book);
+
         return book;
     }
 

@@ -9,6 +9,7 @@ import java.awt.*;
 
 @DBEntity(tableName = "Keywords")
 public class Keyword extends DBObject{
+
     @DBField(name = "keyword")
     private String keyword;
 
@@ -18,5 +19,13 @@ public class Keyword extends DBObject{
 
     public Keyword() {
         this.keyword = "";
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 }

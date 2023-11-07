@@ -48,6 +48,10 @@ public class DBQueryCreator<T> {
                 " WHERE " + infoHelper.getPKColName() + " = " + escapeInt(id);
     }
 
+    public String createFindQuery(T searchParam) {
+        return "SELECT FROM " + infoHelper.getDbTableName() + " WHERE keyword = " + searchParam.toString();
+    }
+
     private String getColumnStringNonNullFields(T obj) {
         String s = "";
         for (Field f : infoHelper.getNonNullFields(obj)) {

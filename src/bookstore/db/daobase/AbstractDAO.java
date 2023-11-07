@@ -23,6 +23,7 @@ public abstract class AbstractDAO<T extends DBObject> implements IDAO<T>{
         infoHelper = new DBObjectMetaInfoHelper<>(t);
         queryCreator = new DBQueryCreator<T>(infoHelper);
     }
+
     @Override
     public boolean store(T obj)
     {
@@ -130,6 +131,26 @@ public abstract class AbstractDAO<T extends DBObject> implements IDAO<T>{
         return false;
     }
 
+    public Vector<T> find(T searchParam) {
+        Vector<T> v = new Vector<>();
+        DBConnection c = MainProgram.getDBConnection();
+
+        try {
+            ResultSet res = c.selectQuery(queryCreator.createFindQuery(searchParam));
+            while (res.next()) {
+                T instance = (T) infoHelper.createInstance();
+                if(instance != null && readFromResultSet(res, instance, true))
+                {
+                    v.add(instance);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return v;
+    }
+
     protected Vector<T> loadInternal(int id, boolean eager) {
 
         Vector<T> v = new Vector<T>();
@@ -183,7 +204,7 @@ public abstract class AbstractDAO<T extends DBObject> implements IDAO<T>{
         return null;
     }
 
-    private boolean readFromResultSet(ResultSet res, T obj, boolean eager) {
+    protected boolean readFromResultSet(ResultSet res, T obj, boolean eager) {
         try {
             for (Field f : infoHelper.getAnnotationFields(DBPrimaryKey.class)) {
                 if (f.getType() == Integer.TYPE) {
