@@ -143,12 +143,12 @@ public class BookRegistration implements ActionListener {
             }
         });
 
+        panel.add(isbn);
+        panel.add(tisbn);
         panel.add(author);
         panel.add(tauthor);
         panel.add(title1);
         panel.add(ttitle);
-        panel.add(isbn);
-        panel.add(tisbn);
         panel.add(description);
         panel.add(tdescription);
         panel.add(language);

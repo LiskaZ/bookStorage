@@ -47,7 +47,7 @@ public class BookOverview extends JPanel {
         bookOverview.getColumn("ID").setMaxWidth(25);
         bookOverview.getColumn("Rating").setMaxWidth(40);
         bookOverview.getColumn("Type").setMaxWidth(35);
-        bookOverview.getColumn("Delete").setMaxWidth(40);
+        bookOverview.getColumn("Delete").setMaxWidth(42);
         bookOverview.getColumn("Delete").setCellRenderer(new ButtonRenderer());
         bookOverview.getColumn("Delete").setCellEditor(
                 new ButtonEditor(new JCheckBox(), this));

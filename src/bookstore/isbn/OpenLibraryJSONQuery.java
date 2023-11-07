@@ -6,10 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -24,7 +22,7 @@ public class OpenLibraryJSONQuery {
         JsonObject bookObj = OpenLibraryJSONQuery.queryURL(URL_PREFIX + "/isbn/" + isbn +".json");
         if(null != bookObj && !bookObj.isEmpty()) {
             title = cleanString(bookObj.get("title").toString());
-            JsonArray authorArray = bookObj.get("authors").getAsJsonArray();
+            JsonArray authorArray = bookObj.has("authors") ? bookObj.get("authors").getAsJsonArray() : new JsonArray();
             if (!authorArray.isEmpty()) {
                 String authorUrl = cleanString(authorArray.get(0).getAsJsonObject().get("key").toString());
                 String fullAuthorURL = URL_PREFIX + authorUrl + ".json";
