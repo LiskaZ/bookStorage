@@ -47,14 +47,19 @@ public class BookSearch extends JPanel {
 
     public BookSearch() {
         super();
+
+        createBookSearch("Search books");
+        addSearch();
+        updateSearchSuggestions();
+    }
+
+    public void updateSearchSuggestions() {
         wordList = new ArrayList<>();
         KeywordDAO dao = new KeywordDAO();
         Vector<Keyword> keywords = dao.loadAll();
         for (Keyword keyword : keywords) {
             wordList.add(keyword.getKeyword());
         }
-        createBookSearch("Search books");
-        addSearch();
     }
 
     private void addSearch() {
@@ -243,8 +248,8 @@ public class BookSearch extends JPanel {
             row.createCell(0).setCellValue(book.getTitle());
             row.createCell(1).setCellValue(book.getAuthor());
             row.createCell(2).setCellValue(book.getDescription());
-            row.createCell(2).setCellValue(BookUtil.getLanguage(book.getLanguage()));
-            row.createCell(2).setCellValue(BookUtil.getType(book.getType()));
+            row.createCell(3).setCellValue(BookUtil.getLanguage(book.getLanguage()));
+            row.createCell(4).setCellValue(BookUtil.getType(book.getType()));
             row.createCell(5).setCellValue(book.getRating());
         }
 

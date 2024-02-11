@@ -37,6 +37,10 @@ public class Book extends DBObject{
     @DBField(name = "rating")
     private int rating;
 
+    public Vector<Keyword> getKeywords() {
+        return keywords;
+    }
+
     @DBFKEntityList(foreignType = Keyword.class)
     private Vector<Keyword> keywords;
 

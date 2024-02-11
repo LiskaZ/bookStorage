@@ -34,7 +34,7 @@ public class MainProgram extends JPanel {
                 "Search books in database");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        BookRegistration br = new BookRegistration(bo);
+        BookRegistration br = new BookRegistration(bo, bs);
         JComponent panel3 = br.createBookRegistration("Add Book");
         tabbedPane.addTab("Add Book", icon, panel3,
                 "Add a new book to the database");

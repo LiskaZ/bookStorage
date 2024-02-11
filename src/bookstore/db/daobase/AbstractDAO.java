@@ -2,6 +2,7 @@ package bookstore.db.daobase;
 
 import bookstore.MainProgram;
 import bookstore.dataobjects.DBObject;
+import bookstore.dataobjects.Keyword;
 import bookstore.dataobjects.annotations.DBFKEntity;
 import bookstore.dataobjects.annotations.DBFKEntityList;
 import bookstore.dataobjects.annotations.DBField;

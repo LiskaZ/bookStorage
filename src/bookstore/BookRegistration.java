@@ -20,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
@@ -50,15 +49,17 @@ public class BookRegistration implements ActionListener {
 
     private final DBConnection db;
     private final BookOverview bo;
+    private final BookSearch bs;
 
     private final String[] languages
             = { "select language", "german", "english" };
     private final String[] types
             = { "select type", "intimate", "great ones", "better ones", "funny or magic" };
 
-    public BookRegistration(BookOverview bo) {
+    public BookRegistration(BookOverview bo, BookSearch bs) {
         this.db = new DBConnection();
         this.bo = bo;
+        this.bs = bs;
     }
 
     public JComponent createBookRegistration(String text) {
@@ -190,6 +191,7 @@ public class BookRegistration implements ActionListener {
 
             Book newBook = addBookToDatabase();
             addBookToOverview(newBook);
+            bs.updateSearchSuggestions();
             JOptionPane.showMessageDialog(null, String.format("Book %s added to database.", ttitle.getText()));
             cleanForm();
 
@@ -204,6 +206,28 @@ public class BookRegistration implements ActionListener {
     }
 
     private Book addBookToDatabase() {
+        ArrayList<Keyword> keywordList = new ArrayList();
+        if (getKey(tkey1) != null && !keywordList.contains(getKey(tkey1))) {
+            keywordList.add(getKey(tkey1));
+        }
+        if (getKey(tkey2) != null && !keywordList.contains(getKey(tkey2))) {
+            keywordList.add(getKey(tkey2));
+        }
+        if (getKey(tkey3) != null && !keywordList.contains(getKey(tkey3))) {
+            keywordList.add(getKey(tkey3));
+        }
+        if (getKey(tkey4) != null && !keywordList.contains(getKey(tkey4))) {
+            keywordList.add(getKey(tkey4));
+        }
+        if (getKey(tkey5) != null && !keywordList.contains(getKey(tkey5))) {
+            keywordList.add(getKey(tkey5));
+        }
+        if (getKey(tkey6) != null && !keywordList.contains(getKey(tkey6))) {
+            keywordList.add(getKey(tkey6));
+        }
+        if (getKey(tkey7) != null && !keywordList.contains(getKey(tkey7))) {
+            keywordList.add(getKey(tkey7));
+        }
         BookDAO bookstore = new BookDAO();
         Book book = new Book(
                 tauthor.getText(),
@@ -212,13 +236,8 @@ public class BookRegistration implements ActionListener {
                 trating.getStar(),
                 ttype.getSelectedIndex(),
                 tlanguage.getSelectedIndex(),
-                new Vector<>(Arrays.asList(new Keyword(tkey1.getText()),
-                        new Keyword(tkey2.getText()),
-                        new Keyword(tkey3.getText()),
-                        new Keyword(tkey4.getText()),
-                        new Keyword(tkey5.getText()),
-                        new Keyword(tkey6.getText()),
-                        new Keyword(tkey7.getText()))));
+                new Vector<>(keywordList)
+                );
         bookstore.store(book);
 
         return book;
