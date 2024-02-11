@@ -2,7 +2,10 @@ package bookstore.dataobjects;
 
 import bookstore.dataobjects.annotations.DBEntity;
 import bookstore.dataobjects.annotations.DBFKEntity;
+import bookstore.dataobjects.annotations.DBFKEntityList;
 import bookstore.dataobjects.annotations.DBField;
+
+import java.util.Vector;
 
 @DBEntity(tableName = "books_keywords")
 public class BookKeyword extends DBObject{
