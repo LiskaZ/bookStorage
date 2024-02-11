@@ -1,7 +1,9 @@
 package bookstore;
 
 import bookstore.dataobjects.Book;
+import bookstore.dataobjects.Keyword;
 import bookstore.db.BookDAO;
+import bookstore.db.KeywordDAO;
 import bookstore.util.BookUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,11 +12,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import static bookstore.util.BookStoreComponents.*;
@@ -35,15 +42,38 @@ public class BookSearch extends JPanel {
     private final JScrollPane scrollPane = new JScrollPane(bookTable);
     private final JPanel bookDetailsPanel = new JPanel(new GridLayout(1, 0));
     private final CardLayout cardLayout = new CardLayout();
+    private JPopupMenu suggestionsPopup = new JPopupMenu();
+    private ArrayList<String> wordList;
 
     public BookSearch() {
         super();
-
+        wordList = new ArrayList<>();
+        KeywordDAO dao = new KeywordDAO();
+        Vector<Keyword> keywords = dao.loadAll();
+        for (Keyword keyword : keywords) {
+            wordList.add(keyword.getKeyword());
+        }
         createBookSearch("Search books");
         addSearch();
     }
 
     private void addSearch() {
+        searchable.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateWordCompletion();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateWordCompletion();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateWordCompletion();
+            }
+        });
         searchBtn.addActionListener(e -> {
             BookDAO bookDAO = new BookDAO();
             while(tableModel.getRowCount() > 0)
@@ -59,6 +89,36 @@ public class BookSearch extends JPanel {
                 tableModel.addRow(bookRow);
             }
         });
+    }
+
+    private void updateWordCompletion() {
+        String input = searchable.getText().toLowerCase(); // Convert input to lowercase for case-insensitive matching
+
+        // Clear existing suggestions
+        suggestionsPopup.removeAll();
+
+        // Add matching words from the word list to the popup
+        for (String word : wordList) {
+            if (word.toLowerCase().startsWith(input)) { // Check if word starts with the input
+                JMenuItem menuItem = new JMenuItem(word);
+                menuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Replace text in text field with selected suggestion
+                        searchable.setText(word);
+                        suggestionsPopup.setVisible(false);
+                    }
+                });
+                suggestionsPopup.add(menuItem);
+            }
+        }
+
+        // Show popup if there are suggestions and the text field is focused
+        if (suggestionsPopup.getComponentCount() > 0 && searchable.isFocusOwner()) {
+            suggestionsPopup.show(searchable, 0, searchable.getHeight());
+        } else {
+            suggestionsPopup.setVisible(false); // Hide popup if there are no suggestions or the text field is not focused
+        }
     }
 
     public void createBookSearch(String text) {
