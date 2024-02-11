@@ -8,6 +8,7 @@ import bookstore.db.KeywordDAO;
 import bookstore.isbn.ISBNBook;
 import bookstore.isbn.OpenLibraryJSONQuery;
 import bookstore.starrating.StarRating;
+import bookstore.util.BookUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,18 +199,19 @@ public class BookRegistration implements ActionListener {
     }
 
     private void addBookToOverview(Book book) {
-        Object [] bookRow = new Object[]{book.getID(), tauthor.getText(), ttitle.getText(), ttype.getSelectedIndex(), trating.getStar(), book.getID()};
+        Object [] bookRow = new Object[]{book.getID(), tauthor.getText(), ttitle.getText(), BookUtil.getType(ttype.getSelectedIndex()), trating.getStar(), book.getID()};
         bo.addBook(bookRow);
     }
 
     private Book addBookToDatabase() {
         BookDAO bookstore = new BookDAO();
-        Book book = new Book(tauthor.getText(),
+        Book book = new Book(
+                tauthor.getText(),
                 ttitle.getText(),
                 tdescription.getText(),
-                tlanguage.getSelectedIndex(),
-                ttype.getSelectedIndex(),
                 trating.getStar(),
+                ttype.getSelectedIndex(),
+                tlanguage.getSelectedIndex(),
                 new Vector<>(Arrays.asList(new Keyword(tkey1.getText()),
                         new Keyword(tkey2.getText()),
                         new Keyword(tkey3.getText()),

@@ -12,12 +12,10 @@ import static java.lang.Integer.parseInt;
 
 class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
-    private final DBConnection db;
     private final BookOverview bo;
 
 
     private String bookID;
-    private String bookTitle;
     private int bookRow;
 
 
@@ -33,7 +31,7 @@ class ButtonEditor extends DefaultCellEditor {
                 getCellEditorValue();
             }
         });
-        this.db = new DBConnection();
+        DBConnection db = new DBConnection();
         bo = bookOverview;
     }
 
@@ -46,7 +44,7 @@ class ButtonEditor extends DefaultCellEditor {
             button.setForeground(table.getForeground());
             button.setBackground(table.getBackground());
         }
-        bookTitle = table.getValueAt(row, column-4).toString();
+        String bookTitle = table.getValueAt(row, column - 4).toString();
         bookID = (value == null) ? "" : value.toString();
         bookRow = row;
         button.setText("x");
@@ -59,8 +57,9 @@ class ButtonEditor extends DefaultCellEditor {
         if (isPushed) {
             BookDAO bookstore = new BookDAO();
             bookstore.remove(parseInt(bookID));
+            String title = bo.bookOverview.getValueAt(bookRow, 2).toString();
             bo.removeBook(bookRow);
-            JOptionPane.showMessageDialog(button, bookTitle + " removed");
+            JOptionPane.showMessageDialog(button, title + " removed");
         }
         isPushed = false;
         return new String(bookID);
